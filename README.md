@@ -2,7 +2,7 @@
 This program can generate Closed-form matting and KNN matting results by an input image and a salient map.
 
 # Note
-input images should be .png files
+Input images should be .png files
 
 # Formats
 Input:  
