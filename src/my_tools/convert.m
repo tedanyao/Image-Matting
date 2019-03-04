@@ -6,7 +6,7 @@ function [image, salient, trimap, scribble] = convert(image_name, salient_name, 
     scribble = [];
     
     % salient
-    if ~isempty(salient_name)
+    if isfile(salient_name)
         salient = im2double(imread(salient_name));
         % salient should be m*n*1 dimension
         if size(salient, 3) == 3
@@ -22,14 +22,14 @@ function [image, salient, trimap, scribble] = convert(image_name, salient_name, 
     end
     
     % trimap
-    if ~isempty(trimap_name)
+    if isfile(trimap_name)
         trimap = im2double(imread(trimap_name));
         % salient should be m*n*1 dimension
         if size(trimap, 3) == 3
             trimap = trimap(:, :, 1);
         end
     else
-        if ~isempty(salient_name)
+        if isfile(salient_name)
             % generate trimap
             disp('generating trimap...');
             trimap = double(white) * 1 ...
@@ -42,14 +42,14 @@ function [image, salient, trimap, scribble] = convert(image_name, salient_name, 
     
     
     % scribble
-    if ~isempty(scribble_name)
+    if isfile(scribble_name)
         scribble = im2double(imread(scribble_name));
         % salient should be m*n*1 dimension
-        if size(scribble, 3) == 3
-            scribble = scribble(:, :, 1);
-        end
+        %if size(scribble, 3) == 3
+        %    scribble = scribble(:, :, 1);
+        %end
     else
-        if ~isempty(salient_name)
+        if isfile(salient_name)
             % generate scribble
             disp('generating scribble...');
             scribble = double(white) * 1 ...
@@ -61,7 +61,7 @@ function [image, salient, trimap, scribble] = convert(image_name, salient_name, 
     end
     
     % error
-    if isempty(salient_name) && isempty(trimap_name) && isempty(scribble_name)
+    if ~isfile(salient_name) && ~isfile(trimap_name) && ~isfile(scribble_name)
         error('missing salient name or trimap_name or scribble_name')
     end
         

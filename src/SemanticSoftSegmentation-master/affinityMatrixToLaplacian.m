@@ -1,7 +1,7 @@
 
 function Lap = affinityMatrixToLaplacian(aff, normalize)
     if ~exist('normalize', 'var') || isempty(normalize)
-        normalize = true ;
+        normalize = false ;
     end
     N = size(aff, 1);
     if normalize
