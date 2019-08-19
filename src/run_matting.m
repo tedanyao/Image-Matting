@@ -22,16 +22,24 @@ addpath(genpath('./my_tools'));
 %clear;
 
 % inputs
-image_path = '../data/test_imgs/original_png';
-salient_path = '../data/test_imgs/salient_png';
+image_path = '../data/new/original_png';
+salient_path = '../data/new/salient_png';
 % input - optional
-trimap_path = '../data/test_imgs/trimap_png'; % not used now
-scribble_path = '../data/test_imgs/scribble_png'; % not used now
-feature_path = '../data/test_imgs/feature_png'; % not used now
+trimap_path = '../data/new/trimap_png'; % not used now
+scribble_path = '../data/new/scribble_png'; % not used now
+feature_path = '../data/new/feature_png'; % not used now
 % outputs
-result_path = '../data/test_imgs/result_tmp';
-
-for i = 1:17
+result_path = '../data/new/result_tmp';
+% bg
+% bg_path = '../data/new/bg/bg.jpg';
+% bg_img = im2double(imread(bg_path));
+% iphone = im2double(imread('../data/new/bg/IMG_0279_iphone.png'));
+% aa = repmat(alpha_CF,[1 1 3]);
+% res = image .* aa + bg_img .* (1 - aa);
+% res2= image .* iphone + bg_img .* (1 - iphone);
+% figure, imshow([image res res2]);
+% figure, imshow([alpha_CF]);
+for i = 28:28
     image_name = sprintf('%s/%d.png', image_path, i);
     salient_name = sprintf('%s/%d.png', salient_path, i);
     trimap_name = sprintf('%s/%d.png', trimap_path, i);
@@ -41,10 +49,12 @@ for i = 1:17
     addpath(genpath('./closed_form'));
     disp('calculating closed-form matting...')
     [image, salient, trimap, scribble] = convert(image_name, salient_name, trimap_name, scribble_name);
-    %tic; alpha_CF = closedFormMatting(image, scribble); toc;
+%%%     tic; alpha_CF = closedFormMatting(image, scribble); toc;
     tic; alpha_CF = closedFormMatting(image, trimap); toc;
     [F_CF,B_CF] = solveFB(image,alpha_CF);
     rmpath(genpath('./closed_form'));
+%     figure,imshow(alpha_CF);
+%     figure,imshow([F_CF, B_CF]);
     
     %% KNN
     addpath(genpath('./KNN'));
@@ -53,6 +63,9 @@ for i = 1:17
     tic; alpha_KNN = knn_matting(image, trimap); toc;
     [F_KNN,B_KNN] = solveFB(image,alpha_KNN);
     rmpath(genpath('./KNN'));
+%     figure,imshow(alpha_KNN);
+%     figure,imshow([F_KNN, B_KNN]);
+%     figure, imshow((1-alpha_KNN).*image);
     
     %% Information-flow
     addpath(genpath('./information_flow'));
@@ -61,7 +74,7 @@ for i = 1:17
     tic; alpha_INFO = informationFlowMatting(image, trimap); toc;
     [F_INFO,B_INFO] = solveFB(image,alpha_INFO);
     rmpath(genpath('./information_flow'));
-    
+%     
     %% SSS
 %     addpath(genpath('./SemanticSoftSegmentation-master'));
 %     features = im2double(imread(feature_name));
@@ -72,17 +85,17 @@ for i = 1:17
     %% overall show image
     
     imageArray = [
-        image, repmat(trimap, [1,1,3]), scribble;
+        image, repmat(trimap, [1,1,3]), image;
         repmat(alpha_CF, [1,1,3]), F_CF.*repmat(alpha_CF,[1,1,3]), B_CF.*repmat(1-alpha_CF,[1,1,3]);
         repmat(alpha_KNN, [1,1,3]), F_KNN.*repmat(alpha_KNN,[1,1,3]), B_KNN.*repmat(1-alpha_KNN,[1,1,3]);
         repmat(alpha_INFO, [1,1,3]), F_INFO.*repmat(alpha_INFO,[1,1,3]), B_INFO.*repmat(1-alpha_INFO,[1,1,3]);
     ];
-    imageArray2 = [
+%     imageArray2 = [
         %image, repmat(trimap, [1,1,3]), scribble;
-        repmat(alpha_CF, [1,1,3]), F_CF.*repmat(alpha_CF,[1,1,3]) + (1 - alpha_CF), B_CF.*repmat(1-alpha_CF,[1,1,3]) + alpha_CF;
-        repmat(alpha_KNN, [1,1,3]), F_KNN.*repmat(alpha_KNN,[1,1,3]) + double(1 - alpha_KNN).*1, B_KNN.*repmat(1-alpha_KNN,[1,1,3]) + alpha_KNN;
-        repmat(alpha_INFO, [1,1,3]), F_INFO.*repmat(alpha_INFO,[1,1,3]) + double(1 - alpha_INFO), B_INFO.*repmat(1-alpha_INFO,[1,1,3]) + alpha_INFO;
-    ];
+%         repmat(alpha_CF, [1,1,3]), F_CF.*repmat(alpha_CF,[1,1,3]) + (1 - alpha_CF), B_CF.*repmat(1-alpha_CF,[1,1,3]) + alpha_CF;
+%         repmat(alpha_KNN, [1,1,3]), F_KNN.*repmat(alpha_KNN,[1,1,3]) + double(1 - alpha_KNN).*1, B_KNN.*repmat(1-alpha_KNN,[1,1,3]) + alpha_KNN;
+%         repmat(alpha_INFO, [1,1,3]), F_INFO.*repmat(alpha_INFO,[1,1,3]) + double(1 - alpha_INFO), B_INFO.*repmat(1-alpha_INFO,[1,1,3]) + alpha_INFO;
+%     ];
     %figure, imshow(imageArray2, 'InitialMagnification', 200);
     %drawnow
     % imshow([alpha_CF alpha_KNN alpha_INFO]);

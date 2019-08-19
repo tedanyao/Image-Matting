@@ -1,5 +1,0 @@
-groupSegments.m:    ids = kmeans(compFeatures, segmCnt);
-softSegmentsFromEigs.m:  [idx, C, sumd, D]=kmeans(X,startK,'EmptyAction','singleton','Start','cluster', ...
-softSegmentsFromEigs.m:            [tmp_idx, tmp_C, ~, tmp_D]=kmeans(clX,2,'EmptyAction','singleton','Start','cluster', 'Maxiter', maxIters);
-softSegmentsFromEigs.m:            [tmp_idx, tmp_C, ~, ~]=kmeans(clX,2,'EmptyAction','singleton','Start','cluster', 'Maxiter', maxIters);
-softSegmentsFromEigs.m:        [idx, C, sumd, D]=kmeans(X, compCnt, 'EmptyAction', 'singleton', 'Start', C, 'Maxiter', maxIters);       
